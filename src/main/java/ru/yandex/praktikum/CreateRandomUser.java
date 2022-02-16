@@ -4,7 +4,7 @@ import org.apache.commons.lang3.RandomStringUtils;
 
 public class CreateRandomUser {
 
-        @Step("Генерация данных пользователя (рандомные данные)")
+    @Step("Генерация данных пользователя (рандомные данные)")
         public static SetUser createNewRandomUser(){
             SetUser setUser = new SetUser();
             setUser.setEmail(RandomStringUtils.randomAlphabetic(5) + "@yandex.ru");

@@ -23,17 +23,14 @@ public class CreateUserTest {
 
        SetUser user = CreateRandomUser.createNewRandomUser();
 
-
-
-
     }
 
     @Test
 
     public void makeRandomUserWithToken(){
-        CreateUser der = new CreateUser();
-        der.getCorrectAuth();
-
+        CreateUser createUser = new CreateUser();
+        createUser.createUserWithToken();
+        createUser.printToken();
+        createUser.deleteUser();
     }
-
 }

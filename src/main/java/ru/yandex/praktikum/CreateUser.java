@@ -1,32 +1,25 @@
 package ru.yandex.praktikum;
-import static io.restassured.RestAssured.defaultParser;
 import static io.restassured.RestAssured.given;
 
 import io.qameta.allure.Step;
-import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import io.restassured.filter.log.RequestLoggingFilter;
-import io.restassured.filter.log.ResponseLoggingFilter;
-import java.util.ArrayList;
 
 
 public class CreateUser {
 
+    private SetUser curentUser;
 
 
-
-
-
-    public SetUser getCorrectAuth() {
+    @Step("POST https://stellarburgers.nomoreparties.site/api/auth/register")
+    public SetUser userRegistration() {
         SetUser newUser =  CreateRandomUser.createNewRandomUser();
         String myEmail = newUser.email;
         String myPassword = newUser.password;
         String myName = newUser.name;
         SetUser auth = new SetUser(myEmail, myPassword,myName);
         getAccessToken(auth);
-        System.out.println("------------------------------------");
-        System.out.println(auth.accessToken.substring(7));
-        System.out.println("------------------------------------");
+        System.out.println("====================================");
+        System.out.println(auth.accessToken);
+        System.out.println("====================================");
         return auth;
     }
 
@@ -45,22 +38,34 @@ public class CreateUser {
 
     }
 
-/*
+    public void createUserWithToken(){
+        curentUser = userRegistration();
+    }
+
+    public void printToken(){
+
+        if (curentUser.accessToken == null) {
+            System.out.println("Юзер удален, токен отсутствует");
+        }
+        System.out.println(curentUser.accessToken);
+    }
 
     public void deleteUser(){
 
-            if (getCorrectAuth() == null) {
-                return;
-            }
+        if (curentUser.accessToken == null) {
+            return;
+        }
             given()
                     .spec(Base.getBaseSpec())
-                    .auth().oauth2(Tokens.getAccessToken())
+                    .auth().oauth2(curentUser.accessToken)
                     .when()
                     .delete("auth/user")
                     .then()
                     .statusCode(202);
+            System.out.println("SSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS");
+            curentUser = null;
+
 
     }
 
-*/
 }
