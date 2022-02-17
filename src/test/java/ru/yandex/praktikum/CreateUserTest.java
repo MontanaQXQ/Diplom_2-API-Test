@@ -6,13 +6,12 @@ import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
-import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import static io.restassured.RestAssured.given;
+
 
 public class CreateUserTest {
 
@@ -29,7 +28,11 @@ public class CreateUserTest {
     @After
     public void tearDown() {
         if (accessToken != null) {
-            userMethods.deleteUser(accessToken);
+            ValidatableResponse deleteResponse  = userMethods.deleteUser(accessToken);
+            int statusCode = deleteResponse.extract().statusCode();
+            assertEquals(202, statusCode);
+
+
         }
     }
 
@@ -40,6 +43,7 @@ public class CreateUserTest {
     @Test
     public void makeRandomUser(){
         SetUser user = CreateRandomUser.createNewRandomUser();
+
     }
 
     //Можно создать пользователя
@@ -52,6 +56,7 @@ public class CreateUserTest {
         int statusCode = response.extract().statusCode();
         assertEquals(200, statusCode);
     }
+
     @DisplayName("Кейс: Cоздать пользователя, который уже зарегистрирован")
     @Description("Регистрирую пользователя с данными которые уже зарегестрированы")
     @Test

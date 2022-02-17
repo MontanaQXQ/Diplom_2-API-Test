@@ -6,18 +6,31 @@ import io.restassured.response.ValidatableResponse;
 
 public class UserMethods {
 
-    @Step("Регистрация пользователья с рандомными данными")
-    public static ValidatableResponse createUser(SetUser Setuser){
+    @Step("Запрос для Регистрации пользователья с рандомными данными")
+    public static ValidatableResponse createUser(SetUser setUser){
         return given()
                 .spec(Base.getBaseSpec())
                 .and()
-                .body(Setuser)
+                .body(setUser)
                 .when()
                 .post(EndPointsUser.POST_CREATE_USER)
                 .then();
     }
 
-    @Step("Удаление пользователя")
+
+    @Step("Запрос  для авторизации пользователя")
+    public ValidatableResponse loginUser(SetUser setUser){
+        return given()
+                .spec(Base.getBaseSpec())
+                .and()
+                .body(setUser)
+                .when()
+                .post(EndPointsUser.POST_AUTH_USER)
+                .then();
+
+    }
+
+    @Step("Запрос на Удаление пользователя")
     public ValidatableResponse deleteUser(String accessToken){
         return given()
                 .spec(Base.getBaseSpec())

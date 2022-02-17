@@ -50,4 +50,15 @@ public class SetUser {
 
         }
 
+    SetUser(String email, String password){
+        this.email = email;
+        this.password = password;
+        this.name = name;
+
     }
+
+
+
+}
+
+
