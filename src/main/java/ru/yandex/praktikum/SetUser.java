@@ -39,7 +39,9 @@ public class SetUser {
         return accessToken;
    }
 
-   SetUser(){}
+   SetUser(){
+
+   }
 
     SetUser(String email, String password, String name){
             this.email = email;
