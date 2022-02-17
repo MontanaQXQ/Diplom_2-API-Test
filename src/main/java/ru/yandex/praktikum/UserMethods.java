@@ -30,6 +30,19 @@ public class UserMethods {
 
     }
 
+    @Step("Запрос  для изменения данных пользователя с авторизацией")
+    public ValidatableResponse changeUserDataInPersonalAccount(String accessToken, SetUser setUser){
+        return given()
+                .spec(Base.getBaseSpec())
+                .header("Authorization", accessToken)
+                .and()
+                .body(setUser)
+                .when()
+                .patch(EndPointsUser.POST_CHANGE_DATA_USER)
+                .then();
+
+    }
+
     @Step("Запрос на Удаление пользователя")
     public ValidatableResponse deleteUser(String accessToken){
         return given()
