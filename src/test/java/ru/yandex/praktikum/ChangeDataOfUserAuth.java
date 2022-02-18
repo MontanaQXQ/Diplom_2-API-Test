@@ -28,6 +28,8 @@ public class ChangeDataOfUserAuth {
     private String name;
     private SetUser setUser;
 
+/// НУЖНО ДОДЕЛАТЬ ,ПОКА НЕ РАБОТАЕТ!
+
 //    public ChangeDataOfUser(SetUser changeUserData){
 //
 //        this.changeUserData = changeUserData;
@@ -78,12 +80,12 @@ public class ChangeDataOfUserAuth {
 
         }
     }
-
+/// НУЖНО ДОДЕЛАТЬ, ПОКА НЕ РАБОТАЕТ!
     @Test
     @DisplayName("Изменение данных авторизованного пользователя")
     public void userCanChangeEmailAfterLoginTest(){
-        SetUser ff = CreateRandomUser.setNewName();
-        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, ff);
+        SetUser ff = CreateRandomUser.setNewName(); // ИЗМЕНИТЬ ТЕСТОВУЮ ПЕРЕМЕННУ ff
+        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, ff);// ИЗМЕНИТЬ ТЕСТОВУЮ ПЕРЕМЕННУ ff
         int statusCode = changeResponse.extract().statusCode();
         assertEquals(200, statusCode);
     }

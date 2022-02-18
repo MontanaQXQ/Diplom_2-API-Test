@@ -43,7 +43,7 @@ public class UserMethods {
 
     }
 
-    //запрос на изменение данных пользователя без авторизации
+
     @Step("Запрос  для изменения данных пользователя без  авторизации")
     public ValidatableResponse changeUserDataInPersonalAccountWithouAuth(SetUser SetUser){
         return given()

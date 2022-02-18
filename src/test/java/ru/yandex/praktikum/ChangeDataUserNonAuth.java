@@ -52,7 +52,7 @@ public class ChangeDataUserNonAuth {
     @Test
     @DisplayName("Изменение данных пользователя без авторизации")
     public void userCanNotChangeDataWithoutLoginTest(){
-////// ИСПРАВИТЬ!!!!!!
+////// ИСПРАВИТЬ!!!!!! ПОКА ЧТО НЕ РАБОТАЕТ КАК НУЖНО!
         ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccountWithouAuth(new SetUser(CreateRandomUser.setNewEmail().getEmail(),CreateRandomUser.setNewName().getName()));
         int statusCode = changeResponse.extract().statusCode();
         String message = changeResponse.extract().path("message");

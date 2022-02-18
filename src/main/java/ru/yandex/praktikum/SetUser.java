@@ -9,7 +9,6 @@ public class SetUser {
 
 
 
-
     public String getEmail() {
             return email;
         }
