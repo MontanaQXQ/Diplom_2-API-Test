@@ -8,7 +8,9 @@ public class SetUser {
         public String accessToken;
 
 
-        public String getEmail() {
+
+
+    public String getEmail() {
             return email;
         }
 

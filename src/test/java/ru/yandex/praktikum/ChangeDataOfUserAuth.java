@@ -16,36 +16,38 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import static org.junit.Assert.assertEquals;
 
-@RunWith(Parameterized.class)
-public class ChangeDataOfUser {
+//@RunWith(Parameterized.class)
+public class ChangeDataOfUserAuth {
 
     UserMethods userMethods = new UserMethods();
-    private final SetUser changeUserData;
+    //private final SetUser changeUserData;
     private String accessToken;
     private String accessTokenLogin;
     private String email;
     private String password;
+    private String name;
+    private SetUser setUser;
 
-    public ChangeDataOfUser(SetUser changeUserData){
-
-        this.changeUserData = changeUserData;
-
-    }
-
-    @Parameterized.Parameters
-    public static Object[][] changeParameter(){
-        return new Object[][]{
-                //изменение адреса электронной почты авторизованного пользователя")
-                {CreateRandomUser.setNewName(),
-                },
-                //изменение пароля авторизованного пользователя
-                {CreateRandomUser.setNewPassword(),
-                },
-                //изменение имени авторизованного пользователя
-                {CreateRandomUser.setNewEmail()
-                }
-        };
-    }
+//    public ChangeDataOfUser(SetUser changeUserData){
+//
+//        this.changeUserData = changeUserData;
+//
+//    }
+//
+//    @Parameterized.Parameters
+//    public static Object[][] changeParameter(){
+//        return new Object[][]{
+//                //изменение адреса электронной почты авторизованного пользователя")
+//                {CreateRandomUser.setNewName(),
+//                },
+//                //изменение пароля авторизованного пользователя
+//                {CreateRandomUser.setNewPassword(),
+//                },
+//                //изменение имени авторизованного пользователя
+//                {CreateRandomUser.setNewEmail()
+//                }
+//        };
+//    }
 
     @Before
     public void setUp() {
@@ -57,6 +59,7 @@ public class ChangeDataOfUser {
         int statusCode = response.extract().statusCode();
         email = response.extract().path("user.email");
         password = randomUser.getPassword();
+        name = randomUser.getName();
         assertEquals(200, statusCode);
         ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
         int statusCodeLogin = responseLogin.extract().statusCode();
@@ -79,7 +82,8 @@ public class ChangeDataOfUser {
     @Test
     @DisplayName("Изменение данных авторизованного пользователя")
     public void userCanChangeEmailAfterLoginTest(){
-        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, changeUserData);
+        SetUser ff = CreateRandomUser.setNewName();
+        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, ff);
         int statusCode = changeResponse.extract().statusCode();
         assertEquals(200, statusCode);
     }

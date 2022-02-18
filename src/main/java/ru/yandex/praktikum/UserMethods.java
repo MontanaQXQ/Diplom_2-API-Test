@@ -43,6 +43,18 @@ public class UserMethods {
 
     }
 
+    //запрос на изменение данных пользователя без авторизации
+    @Step("Запрос  для изменения данных пользователя без  авторизации")
+    public ValidatableResponse changeUserDataInPersonalAccountWithouAuth(SetUser SetUser){
+        return given()
+                .spec(Base.getBaseSpec())
+                .and()
+                .body(SetUser)
+                .when()
+                .patch(EndPointsUser.POST_CHANGE_DATA_USER)
+                .then();
+    }
+
     @Step("Запрос на Удаление пользователя")
     public ValidatableResponse deleteUser(String accessToken){
         return given()
