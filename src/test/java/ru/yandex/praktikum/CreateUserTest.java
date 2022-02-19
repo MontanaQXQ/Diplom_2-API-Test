@@ -10,6 +10,7 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import java.util.concurrent.TimeUnit;
 
 
 public class CreateUserTest {
@@ -25,11 +26,12 @@ public class CreateUserTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
         if (accessToken != null) {
             ValidatableResponse deleteResponse  = userMethods.deleteUser(accessToken);
             int statusCode = deleteResponse.extract().statusCode();
             assertEquals(202, statusCode);
+            TimeUnit.SECONDS.sleep(5);
 
 
         }

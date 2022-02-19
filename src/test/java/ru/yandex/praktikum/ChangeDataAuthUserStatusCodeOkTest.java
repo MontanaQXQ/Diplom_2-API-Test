@@ -1,6 +1,5 @@
 package ru.yandex.praktikum;
 
-import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -10,46 +9,47 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import static org.junit.Assert.assertEquals;
-import io.qameta.allure.Description;
-import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
-import static org.junit.Assert.assertEquals;
 
-//@RunWith(Parameterized.class)
-public class ChangeDataOfUserAuth {
+import java.util.concurrent.TimeUnit;
 
-    UserMethods userMethods = new UserMethods();
-    //private final SetUser changeUserData;
+@RunWith(Parameterized.class)
+public class ChangeDataAuthUserStatusCodeOkTest {
+
+    private UserMethods userMethods = new UserMethods();
+    private final SetUser changeUserData;
+    private final String testlable;
     private String accessToken;
     private String accessTokenLogin;
     private String email;
     private String password;
-    private String name;
-    private SetUser setUser;
 
-/// НУЖНО ДОДЕЛАТЬ ,ПОКА НЕ РАБОТАЕТ!
+    public ChangeDataAuthUserStatusCodeOkTest(String testlable,SetUser changeUserData){
 
-//    public ChangeDataOfUser(SetUser changeUserData){
-//
-//        this.changeUserData = changeUserData;
-//
-//    }
-//
-//    @Parameterized.Parameters
-//    public static Object[][] changeParameter(){
-//        return new Object[][]{
-//                //изменение адреса электронной почты авторизованного пользователя")
-//                {CreateRandomUser.setNewName(),
-//                },
-//                //изменение пароля авторизованного пользователя
-//                {CreateRandomUser.setNewPassword(),
-//                },
-//                //изменение имени авторизованного пользователя
-//                {CreateRandomUser.setNewEmail()
-//                }
-//        };
-//    }
+        this.changeUserData = changeUserData;
+        this.testlable = testlable;
+
+    }
+
+    @Parameterized.Parameters(name = "{0}: {1} = {2}")
+    public static Object[][] changeParameter(){
+        return new Object[][]{
+
+                { "Изменение только адреса электронной почты пользователя",CreateRandomUser.setNewEmail()
+                },
+
+                {"изменение адреса электронной почты и имени авторизованного пользователя",(new SetUser(CreateRandomUser.setNewEmail().getEmail(),CreateRandomUser.setNewName().getName()))
+                },
+
+                {"изменение адреса электронной почты и пароля авторизованного пользователя",(new SetUser(CreateRandomUser.setNewEmail().getEmail(),CreateRandomUser.setNewPassword().getPassword()))
+                }
+        };
+    }
+
+
+
+
 
     @Before
     public void setUp() {
@@ -61,7 +61,6 @@ public class ChangeDataOfUserAuth {
         int statusCode = response.extract().statusCode();
         email = response.extract().path("user.email");
         password = randomUser.getPassword();
-        name = randomUser.getName();
         assertEquals(200, statusCode);
         ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
         int statusCodeLogin = responseLogin.extract().statusCode();
@@ -70,22 +69,21 @@ public class ChangeDataOfUserAuth {
 
     }
 
-
     @After
-    public void tearDown() {
+    public void tearDown() throws InterruptedException {
         if (accessToken != null) {
             ValidatableResponse deleteResponse  = userMethods.deleteUser(accessToken);
             int statusCode = deleteResponse.extract().statusCode();
             assertEquals(202, statusCode);
+            TimeUnit.SECONDS.sleep(5);
 
         }
     }
-/// НУЖНО ДОДЕЛАТЬ, ПОКА НЕ РАБОТАЕТ!
+
     @Test
-    @DisplayName("Изменение данных авторизованного пользователя")
-    public void userCanChangeEmailAfterLoginTest(){
-        SetUser ff = CreateRandomUser.setNewName(); // ИЗМЕНИТЬ ТЕСТОВУЮ ПЕРЕМЕННУ ff
-        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, ff);// ИЗМЕНИТЬ ТЕСТОВУЮ ПЕРЕМЕННУ ff
+    @DisplayName("Изменение данных авторизованного пользователя с ожидаемым ответом 200 ок")
+    public void userCanChangeEmailWithAnotherDataAfterLoginTest(){
+        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, changeUserData);
         int statusCode = changeResponse.extract().statusCode();
         assertEquals(200, statusCode);
     }

@@ -1,6 +1,6 @@
 package ru.yandex.praktikum;
 
-import io.qameta.allure.Description;
+
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -9,26 +9,47 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
 
-public class CreateOrderTest {
+@RunWith(Parameterized.class)
+public class ChangeDataAuthUserStatusCodeForbiddenTest {
 
-    UserMethods userMethods = new UserMethods();
-    CreatingOrder creatingOrder = new CreatingOrder();
-    OrderMethods orderMethods = new OrderMethods();
+    private UserMethods userMethods = new UserMethods();
+    private final SetUser changeUserData;
+    private final String testlable;
     private String accessToken;
     private String accessTokenLogin;
     private String email;
     private String password;
+
+    public ChangeDataAuthUserStatusCodeForbiddenTest(String testlable,SetUser changeUserData){
+
+        this.changeUserData = changeUserData;
+        this.testlable = testlable;
+
+    }
+
+    @Parameterized.Parameters(name = "{0}: {1} = {2}")
+    public static Object[][] changeParameter(){
+        return new Object[][]{
+
+                { "Изменение только пароля у авторизованного пользователя",CreateRandomUser.setNewPassword()
+                },
+
+                { "Изменение только имени у  авторизованного пользователя",CreateRandomUser.setNewName()
+                }
+        };
+    }
+
+
+
     @Before
-    public void setUp(){
+    public void setUp() {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
         SetUser randomUser = CreateRandomUser.createNewRandomUser();
@@ -42,7 +63,9 @@ public class CreateOrderTest {
         int statusCodeLogin = responseLogin.extract().statusCode();
         accessTokenLogin = responseLogin.extract().path("accessToken");
         assertEquals(200, statusCodeLogin);
+
     }
+
 
     @After
     public void tearDown() throws InterruptedException {
@@ -52,33 +75,18 @@ public class CreateOrderTest {
             assertEquals(202, statusCode);
             TimeUnit.SECONDS.sleep(5);
 
+
         }
     }
 
-
     @Test
-    @DisplayName("Создание заказа с авторизацией и ингредиентами")
-    public void userAuthdMakeOrderTest(){
-        List<String> burger = creatingOrder.makeBurger();
-        Map<String, List<String>> burgerOrder = new HashMap<>();
-        burgerOrder.put("ingredients", burger);
-        ValidatableResponse order = orderMethods.makeOrder(accessTokenLogin, burgerOrder);
-        int statusCode = order.extract().statusCode();
-        assertEquals( 200, statusCode);
-
-    }
-
-
-    @Test
-    @DisplayName("Cоздание заказа без авторизации")
-    public void userNonAuthorizedMakeOrderTest(){
-        List<String> burger = creatingOrder.makeBurger();
-        Map<String, List<String>> burgerOrder = new HashMap<>();
-        burgerOrder.put("ingredients", burger);
-        System.out.println("========================================================================================================================================");
-        ValidatableResponse order = orderMethods.makeOrder("", burgerOrder);
-        int statusCode = order.extract().statusCode();
-        assertEquals("Unauthorized", 200, statusCode);
+    @DisplayName("Изменение данных авторизованного пользователя с ожидаемой ошибкой 403")
+    public void userCanChangeEmailWithAnotherDataAfterLoginTest(){
+        ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, changeUserData);
+        int statusCode = changeResponse.extract().statusCode();
+        String message = changeResponse.extract().path("message");
+        assertEquals(403, statusCode);
+        assertEquals("User with such email already exists", message);
     }
 
 
