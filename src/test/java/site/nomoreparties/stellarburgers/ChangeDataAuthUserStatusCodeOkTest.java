@@ -82,7 +82,7 @@ public class ChangeDataAuthUserStatusCodeOkTest {
     }
 
     @Test
-    @DisplayName("Изменение данных авторизованного пользователя с ожидаемым ответом 200 ок")
+    //Изменение данных авторизованного пользователя с ожидаемым ответом 200 ок
     public void userCanChangeEmailWithAnotherDataAfterLoginTest(){
         ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, changeUserData);
         int statusCode = changeResponse.extract().statusCode();

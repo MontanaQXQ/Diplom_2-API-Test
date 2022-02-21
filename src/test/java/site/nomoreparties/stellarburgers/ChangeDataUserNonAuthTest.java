@@ -67,7 +67,7 @@ public class ChangeDataUserNonAuthTest {
     }
 
     @Test
-    @DisplayName("Изменение данных пользователя без авторизации")
+   //Изменение данных пользователя без авторизации
     public void userCanNotChangeNameWithoutLoginTest(){
 
         ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccountWithouAuth(changeUserData);
