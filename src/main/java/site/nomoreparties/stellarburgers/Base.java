@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 

@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 import static io.restassured.RestAssured.given;
 
 import io.qameta.allure.Step;

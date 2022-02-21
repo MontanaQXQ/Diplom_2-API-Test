@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;

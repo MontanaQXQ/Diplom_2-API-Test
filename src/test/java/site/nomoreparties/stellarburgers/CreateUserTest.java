@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
@@ -38,17 +38,10 @@ public class CreateUserTest {
     }
 
 
-    //проверка созданяи рандомных данных
-    @DisplayName("проверка созданяи рандомных данных")
-    @Description("генерирую данные для  регистрации пользователя")
-    @Test
-    public void makeRandomUser(){
-        SetUser user = CreateRandomUser.createNewRandomUser();
 
-    }
 
     //Можно создать пользователя
-    @DisplayName("Кейс:  уникального пользователя")
+    @DisplayName("Кейс: Регистрирую  уникального пользователя")
     @Description("Регистрирую пользователя")
     @Test
     public void userRegistrationWithToken(){

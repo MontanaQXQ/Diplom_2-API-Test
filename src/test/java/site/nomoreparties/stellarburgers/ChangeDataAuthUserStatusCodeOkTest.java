@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
@@ -36,13 +36,13 @@ public class ChangeDataAuthUserStatusCodeOkTest {
     public static Object[][] changeParameter(){
         return new Object[][]{
 
-                { "Изменение только адреса электронной почты пользователя",CreateRandomUser.setNewEmail()
+                { "Изменение только пароля у авторизованного пользователя",CreateRandomUser.setNewPassword()
                 },
 
-                {"изменение адреса электронной почты и имени авторизованного пользователя",(new SetUser(CreateRandomUser.setNewEmail().getEmail(),CreateRandomUser.setNewName().getName()))
+                { "Изменение только имени у  авторизованного пользователя",CreateRandomUser.setNewName()
                 },
 
-                {"изменение адреса электронной почты и пароля авторизованного пользователя",(new SetUser(CreateRandomUser.setNewEmail().getEmail(),CreateRandomUser.setNewPassword().getPassword()))
+                { "Изменение только адреса электронной почты у авторизованного пользователя",CreateRandomUser.setNewEmail()
                 }
         };
     }
@@ -62,6 +62,7 @@ public class ChangeDataAuthUserStatusCodeOkTest {
         email = response.extract().path("user.email");
         password = randomUser.getPassword();
         assertEquals(200, statusCode);
+
         ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
         int statusCodeLogin = responseLogin.extract().statusCode();
         accessTokenLogin = responseLogin.extract().path("accessToken");

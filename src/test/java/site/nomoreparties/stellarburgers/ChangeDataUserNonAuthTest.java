@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
@@ -34,7 +34,7 @@ public class ChangeDataUserNonAuthTest {
         return new Object[][]{
 
 
-                {"изменение имени неавторизованного неавторизованного пользователя",CreateRandomUser.setNewName()
+                {"изменение имени  неавторизованного пользователя",CreateRandomUser.setNewName()
                 },
 
                 { "изменение электронной почты неавторизованного пользователя",CreateRandomUser.setNewEmail()

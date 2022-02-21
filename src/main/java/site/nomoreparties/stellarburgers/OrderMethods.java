@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 import static io.restassured.RestAssured.given;
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -25,11 +25,10 @@ public class OrderMethods {
                 .header("Authorization", accessToken)
                 .and()
                 .body(userOrder)
-                .log().body()
                 .when()
                 .post(EndPointsOrder.POST_GET_USER_ORDERS)
-                .then()
-                .log().body();
+                .then();
+
     }
 
     //получение заказов пользователя

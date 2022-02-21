@@ -1,4 +1,4 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 
 import io.qameta.allure.Step;
 import io.restassured.response.ValidatableResponse;
@@ -29,7 +29,7 @@ public class CreatingOrder {
     }
 
     public String incorrectIngredient(){
-        return "61c0c5a71d1f82001bdqwer9q" + RandomStringUtils.randomAlphanumeric(2);
+        return "61c0c5a71d1f82001bdqwer" + RandomStringUtils.randomAlphanumeric(2);
     }
 
     @Step("Создание бургера из несуществующих ингредиентов")

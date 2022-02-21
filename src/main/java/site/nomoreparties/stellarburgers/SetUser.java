@@ -1,4 +1,7 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+@JsonInclude(JsonInclude.Include.NON_NULL)
 
 public class SetUser {
 
@@ -54,8 +57,6 @@ public class SetUser {
     SetUser(String email, String password){
         this.email = email;
         this.password = password;
-
-
     }
 
 

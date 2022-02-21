@@ -1,6 +1,6 @@
-package ru.yandex.praktikum;
+package site.nomoreparties.stellarburgers;
 
-import io.qameta.allure.Description;
+
 import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
@@ -38,10 +38,6 @@ public class CreateOrderTest {
         email = response.extract().path("user.email");
         password = randomUser.getPassword();
         assertEquals(200, statusCode);
-        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
-        int statusCodeLogin = responseLogin.extract().statusCode();
-        accessTokenLogin = responseLogin.extract().path("accessToken");
-        assertEquals(200, statusCodeLogin);
     }
 
     @After
@@ -57,8 +53,13 @@ public class CreateOrderTest {
 
 
     @Test
-    @DisplayName("Создание заказа с авторизацией и ингредиентами")
+    @DisplayName("Кейс:Создание заказа с авторизацией и ингредиентами")
     public void userAuthdMakeOrderTest(){
+        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
+        int statusCodeLogin = responseLogin.extract().statusCode();
+        accessTokenLogin = responseLogin.extract().path("accessToken");
+        assertEquals(200, statusCodeLogin);
+
         List<String> burger = creatingOrder.makeBurger();
         Map<String, List<String>> burgerOrder = new HashMap<>();
         burgerOrder.put("ingredients", burger);
@@ -70,7 +71,7 @@ public class CreateOrderTest {
 
 
     @Test
-    @DisplayName("Cоздание заказа без авторизации")
+    @DisplayName("Кейс:Создание заказа без авторизации")
     public void userNonAuthorizedMakeOrderTest(){
         List<String> burger = creatingOrder.makeBurger();
         Map<String, List<String>> burgerOrder = new HashMap<>();
@@ -78,7 +79,38 @@ public class CreateOrderTest {
         System.out.println("========================================================================================================================================");
         ValidatableResponse order = orderMethods.makeOrder("", burgerOrder);
         int statusCode = order.extract().statusCode();
-        assertEquals("Unauthorized", 200, statusCode);
+        assertEquals( 200, statusCode);
+    }
+
+    @Test
+    @DisplayName("Кейс:Создание заказа без ингредиентов")
+    public void userMakeOrderWithoutIngridientTest(){
+        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
+        int statusCodeLogin = responseLogin.extract().statusCode();
+        accessTokenLogin = responseLogin.extract().path("accessToken");
+        assertEquals(200, statusCodeLogin);
+
+        Map<String, List<String>> burgerOrder = new HashMap<>();
+        ValidatableResponse order = orderMethods.makeOrder(accessTokenLogin, burgerOrder);
+        int statusCode = order.extract().statusCode();
+        String message = order.extract().path("message");
+        assertEquals("Bad Request", 400, statusCode);
+        assertEquals("Ingredient ids must be provided", message);}
+
+    @Test
+    @DisplayName("Кейс:Создание с неверным хешем ингредиентов")
+    public void userCanNotMakeOrderWithIncorrectHashOfIngredientsTest(){
+        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
+        int statusCodeLogin = responseLogin.extract().statusCode();
+        accessTokenLogin = responseLogin.extract().path("accessToken");
+        assertEquals(200, statusCodeLogin);
+
+        List<String> burger = creatingOrder. makeBurgerWithIncorrectIngredients();
+        Map<String, List<String>> burgerOrder = new HashMap<>();
+        burgerOrder.put("ingredients", burger);
+        ValidatableResponse order = orderMethods.makeOrder(accessTokenLogin, burgerOrder);
+        int statusCode = order.extract().statusCode();
+        assertEquals( 500, statusCode);
     }
 
 
