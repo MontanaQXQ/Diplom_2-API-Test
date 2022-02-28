@@ -1,6 +1,5 @@
 package site.nomoreparties.stellarburgers;
 
-import io.qameta.allure.junit4.DisplayName;
 import io.restassured.RestAssured;
 import io.restassured.filter.log.RequestLoggingFilter;
 import io.restassured.filter.log.ResponseLoggingFilter;
@@ -8,24 +7,25 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.concurrent.TimeUnit;
 
+import static org.junit.Assert.assertEquals;
+
 @RunWith(Parameterized.class)
 public class ChangeDataAuthUserStatusCodeOkTest {
 
-    private UserMethods userMethods = new UserMethods();
     private final SetUser changeUserData;
     private final String testlable;
+    private final UserMethods userMethods = new UserMethods();
     private String accessToken;
     private String accessTokenLogin;
     private String email;
     private String password;
 
-    public ChangeDataAuthUserStatusCodeOkTest(String testlable,SetUser changeUserData){
+    public ChangeDataAuthUserStatusCodeOkTest(String testlable, SetUser changeUserData) {
 
         this.changeUserData = changeUserData;
         this.testlable = testlable;
@@ -33,22 +33,19 @@ public class ChangeDataAuthUserStatusCodeOkTest {
     }
 
     @Parameterized.Parameters(name = "{0}: {1} = {2}")
-    public static Object[][] changeParameter(){
+    public static Object[][] changeParameter() {
         return new Object[][]{
 
-                { "Изменение только пароля у авторизованного пользователя",CreateRandomUser.setNewPassword()
+                {"Изменение только пароля у авторизованного пользователя", CreateRandomUser.setNewPassword()
                 },
 
-                { "Изменение только имени у  авторизованного пользователя",CreateRandomUser.setNewName()
+                {"Изменение только имени у  авторизованного пользователя", CreateRandomUser.setNewName()
                 },
 
-                { "Изменение только адреса электронной почты у авторизованного пользователя",CreateRandomUser.setNewEmail()
+                {"Изменение только адреса электронной почты у авторизованного пользователя", CreateRandomUser.setNewEmail()
                 }
         };
     }
-
-
-
 
 
     @Before
@@ -56,26 +53,24 @@ public class ChangeDataAuthUserStatusCodeOkTest {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
         SetUser randomUser = CreateRandomUser.createNewRandomUser();
-        ValidatableResponse response = userMethods.createUser(randomUser);
+        ValidatableResponse response = UserMethods.createUser(randomUser);
         accessToken = response.extract().path("accessToken");
-        int statusCode = response.extract().statusCode();
         email = response.extract().path("user.email");
         password = randomUser.getPassword();
-        assertEquals(200, statusCode);
 
-        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
+        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email, password));
         int statusCodeLogin = responseLogin.extract().statusCode();
         accessTokenLogin = responseLogin.extract().path("accessToken");
-        assertEquals(200, statusCodeLogin);
+        assertEquals("User didn't Login",200, statusCodeLogin);
 
     }
 
     @After
     public void tearDown() throws InterruptedException {
         if (accessToken != null) {
-            ValidatableResponse deleteResponse  = userMethods.deleteUser(accessToken);
+            ValidatableResponse deleteResponse = userMethods.deleteUser(accessToken);
             int statusCode = deleteResponse.extract().statusCode();
-            assertEquals(202, statusCode);
+            assertEquals("User Didn't Delete",202, statusCode);
             TimeUnit.SECONDS.sleep(5);
 
         }
@@ -83,9 +78,9 @@ public class ChangeDataAuthUserStatusCodeOkTest {
 
     @Test
     //Изменение данных авторизованного пользователя с ожидаемым ответом 200 ок
-    public void userCanChangeEmailWithAnotherDataAfterLoginTest(){
+    public void userCanChangeEmailWithAnotherDataAfterLoginTest() {
         ValidatableResponse changeResponse = userMethods.changeUserDataInPersonalAccount(accessTokenLogin, changeUserData);
         int statusCode = changeResponse.extract().statusCode();
-        assertEquals(200, statusCode);
+        assertEquals("Incorrect Status Code - Should be 200 ok",200, statusCode);
     }
 }

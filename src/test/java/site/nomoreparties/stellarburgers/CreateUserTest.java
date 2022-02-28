@@ -9,8 +9,10 @@ import io.restassured.response.ValidatableResponse;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import static org.junit.Assert.assertEquals;
+
 import java.util.concurrent.TimeUnit;
+
+import static org.junit.Assert.assertEquals;
 
 
 public class CreateUserTest {
@@ -22,64 +24,52 @@ public class CreateUserTest {
     public void setUp() {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
-
     }
 
     @After
     public void tearDown() throws InterruptedException {
         if (accessToken != null) {
-            ValidatableResponse deleteResponse  = userMethods.deleteUser(accessToken);
+            ValidatableResponse deleteResponse = userMethods.deleteUser(accessToken);
             int statusCode = deleteResponse.extract().statusCode();
-            assertEquals(202, statusCode);
+            assertEquals("User Didn't Delete", 202, statusCode);
             TimeUnit.SECONDS.sleep(5);
-
-
         }
     }
-
-
-
 
     //Можно создать пользователя
     @DisplayName("Кейс: Регистрирую  уникального пользователя")
     @Description("Регистрирую пользователя")
     @Test
-    public void userRegistrationWithToken(){
-        ValidatableResponse response = userMethods.createUser(CreateRandomUser.createNewRandomUser());
+    public void userRegistrationWithToken() {
+        ValidatableResponse response = UserMethods.createUser(CreateRandomUser.createNewRandomUser());
         accessToken = response.extract().path("accessToken");
         int statusCode = response.extract().statusCode();
-        assertEquals(200, statusCode);
+        assertEquals("Wrong Status Code. Should be - 200 ok", 200, statusCode);
     }
 
     @DisplayName("Кейс: Cоздать пользователя, который уже зарегистрирован")
     @Description("Регистрирую пользователя с данными которые уже зарегестрированы")
     @Test
-    public void cantRegistrateSameUser(){
-        ValidatableResponse response = userMethods.createUser(new SetUser("tyuiop@yandex.ru","tyuiop","tyuiop"));
+    public void cantRegistrateSameUser() {
+        ValidatableResponse response = UserMethods.createUser(new SetUser("tyuiop@yandex.ru", "tyuiop", "tyuiop"));
         accessToken = response.extract().path("accessToken");
-        int statusCode = response.extract().statusCode();
-        assertEquals(200, statusCode);
-        ValidatableResponse responseTwo = userMethods.createUser(new SetUser("tyuiop@yandex.ru","tyuiop","tyuiop"));
+
+        ValidatableResponse responseTwo = UserMethods.createUser(new SetUser("tyuiop@yandex.ru", "tyuiop", "tyuiop"));
         int statusCodeSecond = responseTwo.extract().statusCode();
         String message = responseTwo.extract().path("message");
-        assertEquals(403, statusCodeSecond);
-        assertEquals("User already exists", message);
+        assertEquals("Wrong Status Code. Should be - 403 Forbidden", 403, statusCodeSecond);
+        assertEquals("Wrong Message - not expected message", "User already exists", message);
     }
 
     @DisplayName("Кейс:Cоздать пользователя и не заполнить одно из обязательных полей.")
     @Description("Не указываю Email")
     @Test
-    public void registrateUserWithoutOneField(){
-        ValidatableResponse response = userMethods.createUser(new SetUser("","tyuiop","tyuiop"));
+    public void registrateUserWithoutOneField() {
+        ValidatableResponse response = UserMethods.createUser(new SetUser("", "tyuiop", "tyuiop"));
         accessToken = response.extract().path("accessToken");
         int statusCode = response.extract().statusCode();
         String message = response.extract().path("message");
-        assertEquals(403, statusCode);
-        assertEquals("Email, password and name are required fields", message);
-
+        assertEquals("Wrong Status Code. Should be - 403 Forbidden", 403, statusCode);
+        assertEquals("Wrong Message - not expected message", "Email, password and name are required fields", message);
     }
-
-
-
-
 }

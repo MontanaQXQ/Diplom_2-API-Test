@@ -25,19 +25,19 @@ public class GetUserOrderTest {
     private String accessTokenLogin;
     private String email;
     private String password;
+
     @Before
-    public void setUp(){
+    public void setUp() {
         RestAssured.baseURI = "https://stellarburgers.nomoreparties.site/";
         RestAssured.filters(new RequestLoggingFilter(), new ResponseLoggingFilter());
 
         SetUser randomUser = CreateRandomUser.createNewRandomUser();
-        ValidatableResponse response = userMethods.createUser(randomUser);
+        ValidatableResponse response = UserMethods.createUser(randomUser);
         accessToken = response.extract().path("accessToken");
         int statusCode = response.extract().statusCode();
         email = response.extract().path("user.email");
         password = randomUser.getPassword();
-        assertEquals(200, statusCode);
-
+        assertEquals("User didn't Login", 200, statusCode);
 
 
     }
@@ -45,9 +45,9 @@ public class GetUserOrderTest {
     @After
     public void tearDown() throws InterruptedException {
         if (accessToken != null) {
-            ValidatableResponse deleteResponse  = userMethods.deleteUser(accessToken);
+            ValidatableResponse deleteResponse = userMethods.deleteUser(accessToken);
             int statusCode = deleteResponse.extract().statusCode();
-            assertEquals(202, statusCode);
+            assertEquals("User Didn't Delete", 202, statusCode);
             TimeUnit.SECONDS.sleep(5);
 
         }
@@ -55,36 +55,29 @@ public class GetUserOrderTest {
 
     @Test
     @DisplayName("Кейс:Получение заказов конкретного пользователя - авторизованный пользователь.")
-    public void getOrdersAuthUserTest(){
-        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email,password));
-        int statusCodeLogin = responseLogin.extract().statusCode();
+    public void getOrdersAuthUserTest() {
+        ValidatableResponse responseLogin = userMethods.loginUser(new SetUser(email, password));
         accessTokenLogin = responseLogin.extract().path("accessToken");
-        assertEquals(200, statusCodeLogin);
 
         List<String> burger = creatingOrder.makeBurger();
         Map<String, List<String>> burgerOrder = new HashMap<>();
         burgerOrder.put("ingredients", burger);
         ValidatableResponse order = orderMethods.makeOrder(accessTokenLogin, burgerOrder);
-        int statusCode = order.extract().statusCode();
-        assertEquals( 200, statusCode);
-
-
 
         ValidatableResponse userOrders = orderMethods.getOrders(accessTokenLogin);
         int statusCodeGetOrder = userOrders.extract().statusCode();
         int orderNumber = order.extract().path("order.number");
-        assertEquals( 200, statusCodeGetOrder);
-        Assert.assertNotNull( orderNumber);
+        assertEquals("Wrong Status Code. Should be - 200 ok", 200, statusCodeGetOrder);
+        Assert.assertNotNull("Order number Cant be Null!", orderNumber);
     }
 
     @Test
     @DisplayName("Кейс:Получение заказов конкретного пользователя - неавторизованный пользователь.")
     public void getOrdersNonAuthUserTest() {
-
         ValidatableResponse userOrders = orderMethods.getOrders("");
         int statusCodeGetOrder = userOrders.extract().statusCode();
         String message = userOrders.extract().path("message");
-        assertEquals( 401, statusCodeGetOrder);
-        assertEquals("You should be authorised", message);
+        assertEquals("Wrong status code.Should be - 401 Unauthorized", 401, statusCodeGetOrder);
+        assertEquals("Wrong message.Message didn't match with expected", "You should be authorised", message);
     }
 }
